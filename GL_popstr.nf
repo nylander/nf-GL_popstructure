@@ -19,7 +19,7 @@ if (params.help) {
             'Mandatory arguments:'
             --bams         FILE      Path to file containing a list of bam paths. Extention .list  
             --outdir       PATH      Path to output directory where results will be should be stored 
-            --chr_ref      FILE      Path to file containing a subset of chromosomse present in bam files 
+            --chr_ref      FILE      Path to file containing a subset of chromosomes present in bam files 
             
             'OPTIONS'
             --help                   Outputs this help log      
@@ -55,9 +55,9 @@ log.info """\
 
 
 // Channel
-   Channel.fromPath( params.bams)
+   Channel.fromPath(params.bams)
          .ifEmpty { error "Cannot find any path matching: ${params.bams}" }
-         .map { it -> [it.name -  ~/\.list/, it] }
+         .map { it -> [it.name - ~/\.list/, it] }
          .set { input }
         
          input.into{ bams_ch; bams_list1_ch; bams_list2_ch }
@@ -76,10 +76,22 @@ process Genotypelikelihoods {
 
    script:
    """
-   angsd -nThreads ${task.cpus} -bam $bam -rf ${params.chr_ref} \
-   -uniqueOnly 1 -minMapQ 20 -minQ 20 -GL 2 -doGlf 2 \
-   -doMajorMinor 1 -skipTriallelic 1 -doMaf 1 -minMaf 0.05 \
-   -SNP_pval 1e-6 -doCounts 1 -setMinDepth 20 -out $subset
+   angsd -nThreads ${task.cpus} \
+         -bam $bam \
+         -rf ${params.chr_ref} \
+         -uniqueOnly 1 \
+         -minMapQ 20 \
+         -minQ 20 \
+         -GL 2 \
+         -doGlf 2 \
+         -doMajorMinor 1 \
+         -skipTriallelic 1 \
+         -doMaf 1 \
+         -minMaf 0.05 \
+         -SNP_pval 1e-6 \
+         -doCounts 1 \
+         -setMinDepth ${params.min_depth} \
+         -out $subset
    """
 }
 
@@ -88,7 +100,7 @@ process Genotypelikelihoods {
 
 process NGSadmix {
    
-    label 'RAM_high'
+   label 'RAM_high'
    
    publishDir "${params.outdir}/02.NGSadmix/$subset", mode:'copy'
 
@@ -125,7 +137,7 @@ process PCAngsd {
   """
 }
 
-if (!params.skip_plots){
+if (!params.skip_plots) {
   
     admixture_ch.join( bams_list2_ch, by: 0 )
     .set { admix_comb }
@@ -232,6 +244,5 @@ covariance_ch.combine( bams_list1_ch, by: 0 )
       unit= "in")
     """
   }
-  
 }
 

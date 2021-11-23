@@ -28,21 +28,23 @@ plots admixture through
 
 ## Input files
 
-#### 1.  bam file list example: 
+#### 1. bam file list example: 
     
     /Absolute/PATH/IndvXXXX/IndvXXXX_sorted.bam 
     /Absolute/PATH/IndvXXXX/IndvXXXX_sorted.bam 
     /Absolute/PATH/IndvXXXX/IndvXXXX_sorted.bam 
     /Absolute/PATH/IndvXXXX/IndvXXXX_sorted.bam 
 
-**Note**: Labels in plots are based on the subdirectory name. Example:
+**Note 1**: index files (`.bai`) needs to be present!
+
+**Note 2**: Labels in plots are based on the subdirectory name. Example:
     
 /results/**Indv0001**/Indv0001\_sorted.bam 
     
 If you have a different file structure you can run the pipeline with the flag
 `--skip_plots true` and create plots on your own.
     
-#### 2. chromosome reference file example (subset of scaffolds present in your bamfiles):
+#### 2. Chromosome reference file example (subset of scaffolds present in your bam files):
   
     chr1
     chr2
