@@ -15,18 +15,18 @@ if (params.help) {
             –––––––––––––––––––––––––––––––––––––––
             'USAGE'
             nextflow run GL_popstr.nf --bams /PATH/'*.list' --outdir /PATH/TO/RESULTS/ --chr_ref /PATH/TO/CHRSOMELIST 
-         
+
             'Mandatory arguments:'
             --bams         FILE      Path to file containing a list of bam paths. Extention .list  
             --outdir       PATH      Path to output directory where results will be should be stored 
             --chr_ref      FILE      Path to file containing a subset of chromosomes present in bam files 
-            
+
             'OPTIONS'
             --help                   Outputs this help log      
             --k            INTEGER   Number of Ancestral populations to test. Defaults to k=2   
             --skip_plots   BOOLEAN   Run pipeline without plots (true/false)       
             -resume                  Nextflow cmd to resume modified workflow
-            
+
             'HPC'
             -profile       FILE      If intention to run workflow on HPC please provide a suitable profile 
                                      in the nextflow.config file 
@@ -59,13 +59,13 @@ log.info """\
          .ifEmpty { error "Cannot find any path matching: ${params.bams}" }
          .map { it -> [it.name - ~/\.list/, it] }
          .set { input }
-        
+
          input.into{ bams_ch; bams_list1_ch; bams_list2_ch }
 
 process Genotypelikelihoods {
 
    label 'RAM_high'
-    
+
    publishDir "${params.outdir}/01.GL/$subset", mode:'copy'
 
    input:
@@ -99,13 +99,13 @@ process Genotypelikelihoods {
    GL_ch.into { GL_ch1; GL_ch2 }    
 
 process NGSadmix {
-   
+
    label 'RAM_high'
-   
+
    publishDir "${params.outdir}/02.NGSadmix/$subset", mode:'copy'
 
    List k_list = 2..params.k
-   
+
    input:
    tuple val(subset), file(GL) from GL_ch1
    each anc from k_list
@@ -117,8 +117,8 @@ process NGSadmix {
    """
    NGSadmix -likes $GL -K $anc -P ${task.cpus} -o ${subset}_k${anc}
    """
-} 
- 
+}
+
 process PCAngsd {
 
   label 'RAM_high'
@@ -133,21 +133,22 @@ process PCAngsd {
 
   script:
   """
+  echo ${params.PCAngsdDir} > $(python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")/pcangsd.pth
   python ${params.PCAngsd} -beagle $GL -o ${subset} -threads ${task.cpus}
   """
 }
 
 if (!params.skip_plots) {
-  
+
     admixture_ch.join( bams_list2_ch, by: 0 )
     .set { admix_comb }
 
     process NGSadmix_plot {
 
     label 'FAST'
-    
+
     publishDir "${params.outdir}/04.plots/$subset", mode:'copy'
-    
+
     List k_list = 2..params.k
 
     input:
@@ -170,7 +171,7 @@ if (!params.skip_plots) {
         line<-strsplit(bam_list[i,], split = '/')
         name<-rev(unlist(line))[2]
         pop[i,]<-name
-    } 
+    }
 
     colpanel <- c("antiquewhite3", "azure3", "cadetblue", "chartreuse3", "cornflowerblue", "darkgoldenrod3", "darkolivegreen3", "darkorchid3", "deeppink1", "deepskyblue3")
 
@@ -189,12 +190,12 @@ if (!params.skip_plots) {
   }
 
 covariance_ch.combine( bams_list1_ch, by: 0 )
-    .set { covariance_comb }   
- 
+    .set { covariance_comb }
+
   process PCAngsd_plot {
-    
+
     label 'FAST'
-    
+
     publishDir "${params.outdir}/04.plots/$subset", mode:'copy'
 
     input:
@@ -206,13 +207,13 @@ covariance_ch.combine( bams_list1_ch, by: 0 )
 
     script:
     """
-    #!/usr/bin/env Rscript  
-    
+    #!/usr/bin/env Rscript
+
     library("ggplot2")
     library("ggrepel")
 
     bam_list<-read.table("${name}", header = FALSE )
-    
+
     pop<-data.frame(indiv=character(0))
     for( i in 1:length(bam_list[["V1"]])){
       line<-strsplit(bam_list[i,], split = '/')
@@ -220,11 +221,11 @@ covariance_ch.combine( bams_list1_ch, by: 0 )
       pop[i,]<-name
     }
     pop<-unlist(list(pop[["indiv"]]))
-    
+
     C <- as.matrix(read.table("${subset}.cov"))
     e <-as.data.frame(eigen(C)[["vectors"]])
-    
-    p = ggplot(aes_(x=e[["V1"]], y=e[["V2"]]), data=e)+geom_point()  + 
+
+    p = ggplot(aes_(x=e[["V1"]], y=e[["V2"]]), data=e)+geom_point()  +
       theme_classic() +
       ggtitle("${subset}") +  xlab("PC1") + ylab("PC2") +
       geom_label_repel(aes_(x=e[["V1"]], y=e[["V2"]], label=pop),
@@ -232,8 +233,8 @@ covariance_ch.combine( bams_list1_ch, by: 0 )
                         label.padding = 0.1, show.legend = FALSE, size=4,
                         min.segment.length = 0.1, max.overlaps = 100)
 
-    plot(p)   
-   
+    plot(p)
+
     ggsave(
       "${subset}_PCA.pdf",
       plot = last_plot(),
