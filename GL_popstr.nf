@@ -145,105 +145,104 @@ if (!params.skip_plots) {
 
     process NGSadmix_plot {
 
-    label 'FAST'
+        label 'FAST'
 
-    publishDir "${params.outdir}/04.plots/$subset", mode:'copy'
+        publishDir "${params.outdir}/04.plots/$subset", mode:'copy'
 
-    List k_list = 2..params.k
+        List k_list = 2..params.k
 
-    input:
-    each anc from k_list
-    tuple val(subset), file("${subset}_k${anc}.qopt"), file(name) from admix_comb
+        input:
+        each anc from k_list
+        tuple val(subset), file("${subset}_k${anc}.qopt"), file(name) from admix_comb
 
-    output:
-    file("*.pdf")
+        output:
+        file("*.pdf")
 
-    script:
-    """
-    #!/usr/bin/env Rscript 
+        script:
+        """
+        #!/usr/bin/env Rscript
 
-    library("ggplot2") 
+        library("ggplot2")
 
-    bam_list<-read.table("$name", header = FALSE)
+        bam_list<-read.table("$name", header=FALSE)
 
-    pop<-data.frame(indiv=character(0))
-      for( i in 1:length(bam_list[["V1"]])){
-        line<-strsplit(bam_list[i,], split = '/')
-        name<-rev(unlist(line))[2]
-        pop[i,]<-name
+        pop <- data.frame(indiv=character(0))
+        for (i in 1:length(bam_list[["V1"]])) {
+            line <- strsplit(bam_list[i,], split='/')
+            name <- rev(unlist(line))[2]
+            pop[i,] <- name
+        }
+
+        colpanel <- c("antiquewhite3", "azure3", "cadetblue", "chartreuse3", "cornflowerblue", "darkgoldenrod3", "darkolivegreen3", "darkorchid3", "deeppink1", "deepskyblue3")
+
+        admix <- t(as.matrix(read.table("${subset}_k${anc}.qopt")))
+        K <- nrow(admix)
+        ord <- order(pop[,1])
+
+        plot_nam <- paste0("${subset}_NGSadmix_k",K ,".pdf")
+        pdf(plot_nam)
+        bar <- barplot(admix[,ord], col=colpanel[1:K], space=0, border=NA, ylab="Admixture proportion")
+        axis(1, labels=pop[ord,1], at=bar, las=2, cex.axis=0.6)
+        dev.off()
+
+        """
     }
-
-    colpanel <- c("antiquewhite3", "azure3", "cadetblue", "chartreuse3", "cornflowerblue", "darkgoldenrod3", "darkolivegreen3", "darkorchid3", "deeppink1", "deepskyblue3")
-
-    admix <- t(as.matrix(read.table("${subset}_k${anc}.qopt")))
-    K <- nrow(admix)
-    ord<-order(pop[,1])
-
-    plot_nam<-paste0("${subset}_NGSadmix_k",K ,".pdf")
-    pdf(plot_nam)
-      bar<-barplot(admix[,ord],col=colpanel[1:K],space=0,border=NA,ylab="Admixture proportion")
-      axis(1, labels = pop[ord,1], at = bar,     las = 2, cex.axis = 0.6)
-
-    dev.off()
-
-    """
-  }
 
 covariance_ch.combine( bams_list1_ch, by: 0 )
     .set { covariance_comb }
 
-  process PCAngsd_plot {
+    process PCAngsd_plot {
 
-    label 'FAST'
+        label 'FAST'
 
-    publishDir "${params.outdir}/04.plots/$subset", mode:'copy'
+        publishDir "${params.outdir}/04.plots/$subset", mode:'copy'
 
-    input:
-    tuple val(subset), file("${subset}.cov"), file(name) from covariance_comb
+        input:
+        tuple val(subset), file("${subset}.cov"), file(name) from covariance_comb
 
-    output:
-    file("${subset}_PCA.pdf")
+        output:
+        file("${subset}_PCA.pdf")
 
 
-    script:
-    """
-    #!/usr/bin/env Rscript
+        script:
+        """
+        #!/usr/bin/env Rscript
 
-    library("ggplot2")
-    library("ggrepel")
+        library("ggplot2")
+        library("ggrepel")
 
-    bam_list<-read.table("${name}", header = FALSE )
+        bam_list<-read.table("${name}", header = FALSE )
 
-    pop<-data.frame(indiv=character(0))
-    for( i in 1:length(bam_list[["V1"]])){
-      line<-strsplit(bam_list[i,], split = '/')
-      name<-rev(unlist(line))[2]
-      pop[i,]<-name
+        pop<-data.frame(indiv=character(0))
+        for( i in 1:length(bam_list[["V1"]])){
+          line<-strsplit(bam_list[i,], split = '/')
+          name<-rev(unlist(line))[2]
+          pop[i,]<-name
+        }
+        pop<-unlist(list(pop[["indiv"]]))
+
+        C <- as.matrix(read.table("${subset}.cov"))
+        e <-as.data.frame(eigen(C)[["vectors"]])
+
+        p = ggplot(aes_(x=e[["V1"]], y=e[["V2"]]), data=e)+geom_point()  +
+          theme_classic() +
+          ggtitle("${subset}") +  xlab("PC1") + ylab("PC2") +
+          geom_label_repel(aes_(x=e[["V1"]], y=e[["V2"]], label=pop),
+                            point.padding = 0.1, label.size=0.1, box.padding=0.35,
+                            label.padding = 0.1, show.legend = FALSE, size=4,
+                            min.segment.length = 0.1, max.overlaps = 100)
+
+        plot(p)
+
+        ggsave(
+          "${subset}_PCA.pdf",
+          plot = last_plot(),
+          device = "pdf",
+          scale=1,
+          width = 15,
+          height = 15,
+          unit= "in")
+        """
     }
-    pop<-unlist(list(pop[["indiv"]]))
-
-    C <- as.matrix(read.table("${subset}.cov"))
-    e <-as.data.frame(eigen(C)[["vectors"]])
-
-    p = ggplot(aes_(x=e[["V1"]], y=e[["V2"]]), data=e)+geom_point()  +
-      theme_classic() +
-      ggtitle("${subset}") +  xlab("PC1") + ylab("PC2") +
-      geom_label_repel(aes_(x=e[["V1"]], y=e[["V2"]], label=pop),
-                        point.padding = 0.1, label.size=0.1, box.padding=0.35,
-                        label.padding = 0.1, show.legend = FALSE, size=4,
-                        min.segment.length = 0.1, max.overlaps = 100)
-
-    plot(p)
-
-    ggsave(
-      "${subset}_PCA.pdf",
-      plot = last_plot(),
-      device = "pdf",
-      scale=1,
-      width = 15,
-      height = 15,
-      unit= "in")
-    """
-  }
 }
 
