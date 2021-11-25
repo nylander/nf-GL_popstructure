@@ -1,0 +1,3 @@
+[submodule "pcangsd"]
+	path = pcangsd
+	url = https://github.com/Rosemeis/pcangsd.git
