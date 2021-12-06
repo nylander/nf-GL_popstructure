@@ -199,8 +199,9 @@ if (!params.skip_plots) {
     plot_nam <- paste0("${subset}_NGSadmix_k", K, ".pdf")
     colors <- brewer.pal(K, "Dark2")
     pdf(plot_nam)
+    par(mar = c(10, 4.1, 4.1, 2.1))
     bar <- barplot(admix[,ord], col=colors, space=0, border=NA, ylab="Admixture proportion", cex.names=0.4)
-    axis(1, labels=pop[ord,1], at=bar, las=2, cex.axis=0.4)
+    axis(1, labels=pop[ord,1], at=bar, las=2, cex.axis=0.6)
     dev.off()
 
     """

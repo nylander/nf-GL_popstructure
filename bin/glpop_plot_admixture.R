@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 
 # Note: need to change nextflow variables to local R variables
-# Last modified: tis nov 30, 2021  04:00
+# Last modified: mån dec 06, 2021  04:38
 # Sign: JN
 
 library("RColorBrewer")
@@ -25,7 +25,8 @@ ord <- order(pop[,1])
 plot_nam <- paste0("${subset}_NGSadmix_k", K, ".pdf")
 colors <- brewer.pal(K, "Dark2")
 pdf(plot_nam)
-bar <- barplot(admix[,ord], col=colors, space=0, border=NA, ylab="Admixture proportion", cex.names=0.4)
-axis(1, labels=pop[ord,1], at=bar, las=2, cex.axis=0.4)
+par(mar = c(10, 4.1, 4.1, 2.1))
+bar <- barplot(admix[,ord], col=colors, space=0, border=NA, ylab="Admixture proportion", cex.names=0.6)
+axis(1, labels=pop[ord,1], at=bar, las=2, cex.axis=0.6)
 dev.off()
 
