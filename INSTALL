@@ -1,6 +1,6 @@
 # Install instructions for nf-GL_popstructure
 
-- Last modified: tis nov 30, 2021  04:16
+- Last modified: mån dec 06, 2021  02:02
 - Sign: JN
 
 ## Prerequisites
@@ -13,10 +13,8 @@
 
 ## Installation
 
-    $ git clone --recursive-submodules https://github.com/nylander/nf-GL_popstructure.git
-    $ cd nf-GL_popstructure
-    $ git checkout jn
-    $ cd pcangsd/
+    $ git clone --branch jn --recurse-submodules https://github.com/nylander/nf-GL_popstructure.git
+    $ cd nf-GL_popstructure/pcangsd
     $ pip install --user -r requirements.txt
     $ python setup.py build_ext --inplace
     $ cp *.py *.so ../bin

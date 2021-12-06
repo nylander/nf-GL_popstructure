@@ -8,13 +8,11 @@ plots admixture through
 
 ## Quick start
 
-**NOTE:** For further instructions, please see documentation for the `jn` branch of this repository.
-
 1) Install [Nextflow](https://www.nextflow.io/) (version >= 19.04)
 
 2) Install [Conda](https://conda.io/miniconda.html) (version >= 4.10)
 
-3) Download  (git clone) a copy of this repository:
+3) Download (git clone) a copy of this repository:
 
         git clone https://github.com/FilipThorn/nf-GL_popstructure.git
 
