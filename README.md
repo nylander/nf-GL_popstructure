@@ -6,6 +6,9 @@ plots admixture through
 [NGSadmix](http://www.popgen.dk/software/index.php/NgsAdmix), and PCAs through
 [PCAngsd](https://github.com/Rosemeis/pcangsd).
 
+
+**NOTE: see the [`INSTALL`](INSTALL) file for install instructions!**
+
 ## Quick start
 
 1) Install [Nextflow](https://www.nextflow.io/) (version >= 19.04)
