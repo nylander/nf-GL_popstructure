@@ -14,23 +14,23 @@ if (params.help) {
             NEXTFLOW   P I P E L I N E
             –––––––––––––––––––––––––––––––––––––––
             'USAGE'
-            nextflow run GL_popstr.nf --bams /PATH/'*.list' --outdir /PATH/TO/RESULTS/ --chr_ref /PATH/TO/CHROMOSOMELIST
+            nextflow run GL_popstr.nf --bams /PATH/'*.list' --chr_ref /PATH/TO/CHROMOSOMELIST
 
             'Mandatory arguments:'
-            --bams         FILE      Path to file containing a list of bam paths. Extention .list
-            --outdir       PATH      Path to output directory where results will be should be stored
+            --bams          FILE     Path to file containing a list of bam paths. Extention .list
+            --chr_ref       FILE     Path to file containing a subset of chromosomes present in bam files
 
             'OPTIONS'
-            --MinDepth     INTEGER   Min depth (for angsd)
-            --MinDepthInd  INTEGER   Min depth per individual (for angsd)
-            --MinInd       INTEGER   Min number of individuals for min depth (for angsd)
-            --chr_ref      FILE      Path to file containing a subset of chromosomes present in bam files
+            --outdir        PATH     Path to output directory where results will be should be stored
+            --min_depth     INTEGER  Min depth (for angsd)
+            --min_depth_ind INTEGER  Min depth per individual (for angsd)
+            --min_ind       INTEGER  Min number of individuals for min depth (for angsd)
+            --k             INTEGER  Number of Ancestral populations to test. Defaults to k=2
+            --skip_plots    BOOLEAN  Run pipeline without plots (true/false)
             --help                   Outputs this help log
-            --k            INTEGER   Number of Ancestral populations to test. Defaults to k=2
-            --skip_plots   BOOLEAN   Run pipeline without plots (true/false)
 
             'HPC'
-            -profile       FILE      If intention to run workflow on HPC please provide a suitable profile
+            -profile        FILE     If intention to run workflow on HPC please provide a suitable profile
                                      in the nextflow.config file
 
             'SUPPORT'
@@ -96,7 +96,7 @@ process Genotypelikelihoods {
          -SNP_pval 1e-6 \
          -doCounts 1 \
          -setMinDepth ${params.min_depth} \
-         -setMindDepthInd ${params.min_depth_ind} \
+         -setMinDepthInd ${params.min_depth_ind} \
          -minInd ${params.min_ind} \
          -out $subset
    """
