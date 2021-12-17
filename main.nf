@@ -48,13 +48,13 @@ log.info """\
          GenotypeLikelihood Population Structure
          NEXTFLOW   P I P E L I N E
          –––––––––––––––––––––––––––––––––––––––
-         bams         : ${params.bams}
-         outdir       : ${params.outdir}
-         k            : ${params.k}
-         chr_ref      : ${params.chr_ref}
-         MinDepth     : ${params.min_depth}
-         MinDepthInd  : ${params.min_depth_ind}
-         MinInd       : ${params.min_ind}
+         bams          : ${params.bams}
+         outdir        : ${params.outdir}
+         k             : ${params.k}
+         chr_ref       : ${params.chr_ref}
+         min_depth     : ${params.min_depth}
+         min_depth_ind : ${params.min_depth_ind}
+         min_ind       : ${params.min_ind}
          """
          .stripIndent()
 
@@ -205,7 +205,7 @@ if (!params.skip_plots) {
     colors <- brewer.pal(K, "Dark2")
     pdf(plot_nam)
     par(mar = c(10, 4.1, 4.1, 2.1))
-    bar <- barplot(admix[,ord], col=colors, space=0, border=NA, ylab="Admixture proportion", cex.names=0.4)
+    bar <- barplot(admix[,ord], col=colors, space=0, border=NA, ylab="Admixture proportion", cex.names=0.6)
     axis(1, labels=pop[ord,1], at=bar, las=2, cex.axis=0.6)
     dev.off()
 
