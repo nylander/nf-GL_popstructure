@@ -22,11 +22,12 @@ if (params.help) {
 
             'OPTIONS'
             --MinDepth     INTEGER   Min depth (for angsd)
+            --MinDepthInd  INTEGER   Min depth per individual (for angsd)
+            --MinInd       INTEGER   Min number of individuals for min depth (for angsd)
             --chr_ref      FILE      Path to file containing a subset of chromosomes present in bam files
             --help                   Outputs this help log
             --k            INTEGER   Number of Ancestral populations to test. Defaults to k=2
             --skip_plots   BOOLEAN   Run pipeline without plots (true/false)
-            -resume                  Nextflow cmd to resume modified workflow
 
             'HPC'
             -profile       FILE      If intention to run workflow on HPC please provide a suitable profile
@@ -52,6 +53,8 @@ log.info """\
          k            : ${params.k}
          chr_ref      : ${params.chr_ref}
          MinDepth     : ${params.min_depth}
+         MinDepthInd  : ${params.min_depth_ind}
+         MinInd       : ${params.min_ind}
          """
          .stripIndent()
 
@@ -93,6 +96,8 @@ process Genotypelikelihoods {
          -SNP_pval 1e-6 \
          -doCounts 1 \
          -setMinDepth ${params.min_depth} \
+         -setMindDepthInd ${params.min_depth_ind} \
+         -minInd ${params.min_ind} \
          -out $subset
    """
 }
