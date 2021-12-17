@@ -248,7 +248,7 @@ if (!params.skip_plots) {
         e <- as.data.frame(eigen(C)[["vectors"]])
 
         p = ggplot(aes_(x=e[["V1"]], y=e[["V2"]]), data=e) +
-            geom_point() +
+            geom_point(colour = "red", size = 3) +
             theme_classic() +
             ggtitle("${subset}") +
             xlab("PC1") +
