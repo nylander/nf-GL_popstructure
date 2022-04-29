@@ -140,7 +140,6 @@ process PCAngsd {
 
   script:
   """
-  echo ${params.PCAngsdDir} > "\$(python -c 'from distutils.sysconfig import get_python_lib; print(get_python_lib())')/pcangsd.pth"
   python ${params.PCAngsd} -beagle $GL -o ${subset} -threads ${task.cpus}
   """
 }

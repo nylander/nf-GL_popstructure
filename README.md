@@ -7,27 +7,22 @@ plots admixture through
 [PCAngsd](https://github.com/Rosemeis/pcangsd).
 
 
-**NOTE: see the [`INSTALL`](INSTALL) file for install instructions!**
+## Installation
 
-## Quick start
+Execution of this package requires python, nextflow, and conda.
+In addition, [PCAngsd](https://github.com/Rosemeis/pcangsd) needs
+to be installed. See the [INSTALL](INSTALL) file for details.
 
-1) Install [Nextflow](https://www.nextflow.io/) (version >= 19.04)
+## Settings
 
-2) Install [Conda](https://conda.io/miniconda.html) (version >= 4.10)
+Edit the run-specific parameter settings in [`nextflow.config`](nextflow.config).
+Furthermore, memory requirements and CPU settings can be changed
+in [`conf/local.config`](conf/local.config).
 
-3) Download (git clone) a copy of this repository:
+## Run
 
-        git clone https://github.com/FilipThorn/nf-GL_popstructure.git
+    $ nextflow run /path/to/nf-GL_popstructure -profile local
 
-4) Download and install PCAngsd from
-[https://github.com/Rosemeis/pcangsd](https://github.com/Rosemeis/pcangsd)
-
-5) Run the nextflow pipeline:
-
-       nextflow run GL_popstr.nf \
-           --bams /PATH/TO/BAMFILELIST/'*.list' \
-           --outdir /PATH/TO/RESULTS/ \
-           --chr_ref /PATH/TO/CHRSOMELIST
 
 ## Input files
 
@@ -58,6 +53,6 @@ If you have a different file structure you can run the pipeline with the flag
 ## HPC environment
 
 Use of a HPC is recommended. Create a nextflow config profile that matches your
-cluster set-up [`profile`](
+cluster set-up. See, e.g. [nextflow.io/docs/latest/config.html](
 https://www.nextflow.io/docs/latest/config.html#config-profiles)
 
