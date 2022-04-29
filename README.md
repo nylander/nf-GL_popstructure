@@ -9,33 +9,39 @@ plots admixture through
 
 ## Installation
 
-Execution of this package requires python, nextflow, and conda.
-In addition, [PCAngsd](https://github.com/Rosemeis/pcangsd) needs
-to be installed. See the [INSTALL](INSTALL) file for details.
+Execution of this package requires python, nextflow, and conda.  In addition,
+[PCAngsd](https://github.com/Rosemeis/pcangsd) needs to be installed. See the
+[INSTALL](INSTALL) file for details.
 
 ## Settings
 
-Edit the run-specific parameter settings in [`nextflow.config`](nextflow.config).
-Furthermore, memory requirements and CPU settings can be changed
-in [`conf/local.config`](conf/local.config).
+Edit the run-specific parameter settings in
+[`nextflow.config`](nextflow.config).  Memory requirements and CPU settings can
+be changed in [`conf/local.config`](conf/local.config).
 
 ## Run
 
-    $ nextflow run /path/to/nf-GL_popstructure -profile local
-
+    $ nextflow run /path/to/nf-GL_popstructure \
+        -profile local \
+        --bams bam.list \
+        --chr_ref chromosomes.txt \
+        --outdir results
 
 ## Input files
 
-#### 1. bam file list example:
+#### 1. File `bam.list` example:
 
     /Absolute/PATH/IndvXXXX/IndvXXXX_sorted.bam
     /Absolute/PATH/IndvXXXX/IndvXXXX_sorted.bam
     /Absolute/PATH/IndvXXXX/IndvXXXX_sorted.bam
     /Absolute/PATH/IndvXXXX/IndvXXXX_sorted.bam
 
-**Note 1**: bam files needs to be indexed (i.e., index files (`.bai`) needs to be present!).
+**Note 1**: the file with a list of bam files needs to end in `.list`.
 
-**Note 2**: Labels in plots are based on the subdirectory name. Example:
+**Note 2**: bam files needs to be indexed (i.e., index files, `.bai`, needs to
+be present!).
+
+**Note 3**: Labels in plots are based on the subdirectory name. Example:
 
 /results/**Indv0001**/Indv0001\_sorted.bam
 
