@@ -13,6 +13,6 @@ dependencies:
   - r-ggplot2=3.3.5
   - r-ggrepel=0.9.1
   - python=3.8.10
-  - numpy=1.21.2
+  - numpy=1.22
   - scipy=1.7.2
   - cython=0.29.24
