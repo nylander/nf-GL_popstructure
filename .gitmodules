@@ -1,3 +1,6 @@
 [submodule "pcangsd"]
 	path = pcangsd
 	url = https://github.com/Rosemeis/pcangsd.git
+[submodule "angsd"]
+	path = angsd
+	url = https://github.com/ANGSD/angsd.git
