@@ -14,7 +14,12 @@ if (params.help) {
             NEXTFLOW   P I P E L I N E
             –––––––––––––––––––––––––––––––––––––––
             'USAGE'
-            nextflow run GL_popstr.nf --bams /PATH/'*.list' --chr_ref /PATH/TO/CHROMOSOMELIST
+            nextflow run nf-GL_popstructure --bams /PATH/'*.list' --chr_ref /PATH/TO/CHROMOSOMELIST
+            nextflow run nf-GL_popstructure \
+                --bams /PATH/'*.list' \
+                --chr_ref /PATH/TO/CHROMOSOMELIST \
+                -profile local
+                -with-conda
 
             'Mandatory arguments:'
             --bams          FILE     Path to file containing a list of bam paths. Extention .list
@@ -81,24 +86,25 @@ process Genotypelikelihoods {
 
    script:
    """
-   angsd -nThreads ${task.cpus} \
-         -bam $bam \
-         -rf ${params.chr_ref} \
-         -uniqueOnly 1 \
-         -minMapQ 20 \
-         -minQ 20 \
-         -GL 2 \
-         -doGlf 2 \
-         -doMajorMinor 1 \
-         -skipTriallelic 1 \
-         -doMaf 1 \
-         -minMaf 0.05 \
-         -SNP_pval 1e-6 \
-         -doCounts 1 \
-         -setMinDepth ${params.min_depth} \
-         -setMinDepthInd ${params.min_depth_ind} \
-         -minInd ${params.min_ind} \
-         -out $subset
+    ${params.angsd} \
+        -nThreads ${task.cpus} \
+        -bam $bam \
+        -rf ${params.chr_ref} \
+        -uniqueOnly 1 \
+        -minMapQ 20 \
+        -minQ 20 \
+        -GL 2 \
+        -doGlf 2 \
+        -doMajorMinor 1 \
+        -skipTriallelic 1 \
+        -doMaf 1 \
+        -minMaf 0.05 \
+        -SNP_pval 1e-6 \
+        -doCounts 1 \
+        -setMinDepth ${params.min_depth} \
+        -setMinDepthInd ${params.min_depth_ind} \
+        -minInd ${params.min_ind} \
+        -out $subset
    """
 }
 
@@ -122,7 +128,7 @@ process NGSadmix {
 
    script:
    """
-   NGSadmix -likes $GL -K $anc -P ${task.cpus} -o ${subset}_k${anc}
+   ${params.NGSadmix} -likes $GL -K $anc -P ${task.cpus} -o ${subset}_k${anc}
    """
 }
 
@@ -190,11 +196,13 @@ if (!params.skip_plots) {
     #axis(1, labels=pop[ord], at=bar, las=2, cex.axis=0.6)
     #dev.off()
     library("RColorBrewer")
-    bam_list <- read.table("$name", header=FALSE)
-    pop <- data.frame(indiv=character(0))
+    bam_list <- read.table("$name", header=FALSE, as.is=TRUE)
+    pop <- vector()
+    #pop <- data.frame(indiv=character(0))
     for (i in 1:length(bam_list[["V1"]])) {
-        line <- strsplit(bam_list[i,], split='/')
-        name <- rev(unlist(line))[2]
+        #line <- strsplit(bam_list[i,], split='/')
+        #name <- rev(unlist(line))[2]
+        name <- tools::file_path_sans_ext(basename(bam_list[i,])) # Assumes names are taken from the bam file name (sans extension)
         pop[i,] <- name
     }
     admix <- t(as.matrix(read.table("${subset}_k${anc}.qopt")))
@@ -233,15 +241,17 @@ if (!params.skip_plots) {
         library("ggplot2")
         library("ggrepel")
 
-        bam_list <- read.table("${name}", header=FALSE )
-
-        pop <- data.frame(indiv=character(0))
+        bam_list <- read.table("${name}", header=FALSE, as.is=TRUE)
+        pop <- vector()
+        #pop <- data.frame(indiv=character(0))
         for (i in 1:length(bam_list[["V1"]])) {
-            line <- strsplit(bam_list[i,], split = '/')
-            name <- rev(unlist(line))[2]
-            pop[i,] <- name
+            name <- tools::file_path_sans_ext(basename(bam_list[i,])) # Assumes names are taken from the bam file name (sans extension)
+            #line <- strsplit(bam_list[i,], split = '/')
+            #name <- rev(unlist(line))[2]
+            #pop[i,] <- name
+            pop[i] <- name
         }
-        pop <- unlist(list(pop[["indiv"]]))
+        #pop <- unlist(list(pop[["indiv"]]))
 
         C <- as.matrix(read.table("${subset}.cov"))
         e <- as.data.frame(eigen(C)[["vectors"]])
