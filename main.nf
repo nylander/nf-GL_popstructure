@@ -173,6 +173,41 @@ process NGSadmix {
     """
 }
 
+process CreateIndList {
+
+    publishDir "${params.outdir}/02.NGSadmix/", mode:'copy'
+
+    input:
+    tuple val(name), file(subset), val(ancestral) from subset_ch
+
+    output:
+    file("${name}.list")
+
+    script:
+    """
+    while read -r line ; do
+      bn=\$(basename \$line .bam)
+      echo "\$bn"
+    done < $subset > ${name}.list
+    """
+}
+
+process CreatePongFileMap {
+
+    publishDir "${params.outdir}/02.NGSadmix/", mode:'copy'
+
+    input:
+    val(x) from channel.fromPath(params.outdir)
+
+    output:
+    file("pong_filemap.txt")
+
+    script:
+    """
+    NGSadmix2pong.pl $x > "pong_filemap.txt"
+    """
+}
+
 process PCANGSD {
 
     tag "$name"
