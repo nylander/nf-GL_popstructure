@@ -204,7 +204,7 @@ process CreatePongFileMap {
 
     script:
     """
-    NGSadmix2pong.pl $x > "pong_filemap.txt"
+    NGSadmix2pong.py $x > "pong_filemap.txt"
     """
 }
 
