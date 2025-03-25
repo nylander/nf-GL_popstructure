@@ -59,11 +59,17 @@ log.info """\
          """
          .stripIndent()
 
-// Channel
+// Channel from bamlist_tsv
 channel.fromPath(params.bamlist_tsv)
     .splitCsv(header:true, sep:'\t')
     .map { row -> tuple(row.name, file(row.subset), row.ancestral) }
     .set { subset_ch }
+
+// Channel from bamlist_tsv 2
+channel.fromPath(params.bamlist_tsv)
+    .splitCsv(header:true, sep:'\t')
+    .map { row -> tuple(row.name, file(row.subset), row.ancestral) }
+    .set { subset2_ch }
 
 // Make chromosome list
 chromo = file(params.chr).readLines()
@@ -178,7 +184,7 @@ process CreateIndList {
     publishDir "${params.outdir}/02.NGSadmix/", mode:'copy'
 
     input:
-    tuple val(name), file(subset), val(ancestral) from subset_ch
+    tuple val(name), file(subset), val(ancestral) from subset2_ch
 
     output:
     file("${name}.list")
