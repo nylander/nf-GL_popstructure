@@ -218,19 +218,19 @@ process PCANGSD {
     """
 }
 
-process CreatePongFileMap {
-
-    publishDir "${params.outdir}/02.NGSadmix/", mode:'copy'
-
-    input:
-    val(x) from channel.fromPath(params.outdir)
-
-    output:
-    file("pong_filemap.txt")
-
-    script:
-    """
-    glpop_file_map.py $x > "pong_filemap.txt"
-    """
-}
+//process CreatePongFileMap {
+//
+//    publishDir "${params.outdir}/02.NGSadmix/", mode:'copy'
+//
+//    input:
+//    val(x) from channel.fromPath(params.outdir)
+//
+//    output:
+//    file("pong_filemap.txt")
+//
+//    script:
+//    """
+//    glpop_file_map.py $x > "pong_filemap.txt"
+//    """
+//}
 
