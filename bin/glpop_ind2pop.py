@@ -11,6 +11,11 @@ then read lines in file TWO (or from stdin) and print them to stdout
 if also present in column one, file ONE.
 Output can be used as ind2pop.txt file when plotting with pong.
 See <https://github.com/ramachandran-lab/pong>.
+
+Example:
+
+    $ ./glpop_ind2pop.py -n mt_k1to5.list -i table.tsv -c 2 -s 3
+
 """
 
 import argparse
@@ -30,7 +35,7 @@ def main():
                         help='File ONE, .list file from 02.NGSAdmix',
                         dest='ngsadmix', required=True)
     parser.add_argument('-i, --input',
-                        help='File TWO, input file',
+                        help='File TWO, input file with columns',
                         dest='input', required=False, default=sys.stdin)
     parser.add_argument('-c, --column',
                         help='Column in file TWO to extract (one based)',
@@ -41,6 +46,9 @@ def main():
     parser.add_argument('-d, --delimiter',
                         help='Delimiter to split column',
                         dest='delimiter', required=False, default='__')
+    parser.add_argument('-p, --pca',
+                        help='Print column one in file ONE as first column in output',
+                        dest='pca', action='store_true', required=False, default=False)
     parser.add_argument('-V', '--version',
                         help='Show version',
                         action='version', version='%(prog)s 0.1')
@@ -59,6 +67,8 @@ def main():
 
     for label in labels:
         if label in input_lines:
+            if args.pca:
+                print(f"{label}\t", end='')
             if args.column:
                 column = input_lines[label].split('\t')[args.column-1]
                 if args.subcolumn:
