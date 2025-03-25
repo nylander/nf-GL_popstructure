@@ -145,11 +145,11 @@ process MergeGL {
 
 // Split channel
 if (params.prune == false) {
-    GL_merge_ch.view().into { GL_pca_ch; GL_admix_ch }
+    GL_merge_ch.into { GL_pca_ch; GL_admix_ch }
 }
 
 if (params.prune == true ) {
-    GL_prune_ch.view().into { GL_pca_ch; GL_admix_ch }
+    GL_prune_ch.into { GL_pca_ch; GL_admix_ch }
 }
 
 process NGSadmix {
