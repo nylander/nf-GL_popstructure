@@ -219,6 +219,9 @@ process PCANGSD {
 }
 
 //process CreatePongFileMap {
+// // Note: this process will execute as soon as the directory
+// // exists, and before any files have been created (fail).
+// // The process needs to be run at the very end of the workflow.
 //
 //    publishDir "${params.outdir}/02.NGSadmix/", mode:'copy'
 //
