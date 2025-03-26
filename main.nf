@@ -181,6 +181,7 @@ process NGSadmix {
 
 process CreateIndList {
 
+    tag "$name"
     publishDir "${params.outdir}/02.NGSadmix/", mode:'copy'
 
     input:
