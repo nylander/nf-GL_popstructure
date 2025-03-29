@@ -5,7 +5,7 @@
 # Based on https://github.com/aersoares81/PCAngsd-PCA-Plots-in-R
 # (Note that input order of pop.info file is switched in this version,
 # compared to Andrés original)
-# Last modified: tis mar 25, 2025  04:27
+# Last modified: lör mar 29, 2025  04:51
 # Sign: JN
 
 # ======= Change settings in this section ====================
@@ -21,7 +21,7 @@ palette <- "Set3" # Max 12 colors in this set
 
 args <- commandArgs(TRUE)
 if (length(args) != 2 || any(grepl("-h|--help", args))) {
-    cat("Usage: aersoares_PCA.R input.cov pop.info\n")
+    cat("Usage: glpop_PCA.R input.cov pop.info\n")
     q("no")
 }
 input_cov <- args[1] # input_cov <- "input.cov"
