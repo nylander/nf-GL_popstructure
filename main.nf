@@ -95,7 +95,8 @@ process GenerateGL {
 
     script:
     """
-    indLen=\$(wc -l < $subset)
+    // indLen=\$(wc -l < $subset)
+    ${params.indLen ? "indLen=${params.indLen}" : "indLen=\$(wc -l < $subset)"}
     angsd \
         -nThreads ${task.cpus} \
         -out ${name}_${chr} \
