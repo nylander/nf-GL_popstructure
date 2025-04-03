@@ -96,7 +96,7 @@ process GenerateGL {
     script:
     """
     // indLen=\$(wc -l < $subset)
-    ${params.indLen ? "indLen=${params.indLen}" : "indLen=\$(wc -l < $subset)"}
+    ${params.minInd ? "minInd=${params.minInd}" : "minInd=\$(wc -l < $subset)"}
     angsd \
         -nThreads ${task.cpus} \
         -out ${name}_${chr} \
@@ -110,7 +110,7 @@ process GenerateGL {
         -doCounts 1 \
             -setMinDepthInd $params.setMinDepthInd \
             -setMinDepth $params.setMinDepth \
-            -minInd \$indLen \
+            -minInd \$minInd \
             -minQ $params.minQ \
         -bam $subset \
             -uniqueOnly 1 \
