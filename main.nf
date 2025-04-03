@@ -96,7 +96,7 @@ process GenerateGL {
     script:
     """
     // indLen=\$(wc -l < $subset)
-    def lineCount = new File($subset).readLines().size()
+    def lineCount = new File('$subset').readLines().size()
     def roundedValue = (lineCount + 1) / 2
     def minIndParam = params.minInd ? "minInd=${params.minInd}" : "minInd=${roundedValue}"
     angsd \
@@ -112,7 +112,7 @@ process GenerateGL {
         -doCounts 1 \
             -setMinDepthInd $params.setMinDepthInd \
             -setMinDepth $params.setMinDepth \
-            -minInd \$minInd \
+            -minInd $minIndParam \
             -minQ $params.minQ \
         -bam $subset \
             -uniqueOnly 1 \
