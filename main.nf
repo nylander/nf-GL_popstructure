@@ -96,7 +96,9 @@ process GenerateGL {
     script:
     """
     // indLen=\$(wc -l < $subset)
-    ${params.minInd ? "minInd=${params.minInd}" : "minInd=\$(wc -l < $subset)"}
+    def lineCount = new File(subset).readLines().size()
+    def roundedValue = (lineCount + 1) / 2
+    def minIndParam = params.minInd ? "minInd=${params.minInd}" : "minInd=${roundedValue}"
     angsd \
         -nThreads ${task.cpus} \
         -out ${name}_${chr} \
