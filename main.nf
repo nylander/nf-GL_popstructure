@@ -112,7 +112,7 @@ process GenerateGL {
         -doCounts 1 \
             -setMinDepthInd $params.setMinDepthInd \
             -setMinDepth $params.setMinDepth \
-            -minInd $minIndParam \
+            -minInd \${minIndParam} \
             -minQ $params.minQ \
         -bam $subset \
             -uniqueOnly 1 \
