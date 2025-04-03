@@ -99,26 +99,26 @@ process GenerateGL {
     def lineCount = new File('$subset').readLines().size()
     def roundedValue = (lineCount + 1) / 2
     def minIndParam = params.minInd ? "minInd=${params.minInd}" : "minInd=${roundedValue}"
-    angsd \
-        -nThreads ${task.cpus} \
-        -out ${name}_${chr} \
-        -GL 1 \
-            -doGlf 2 \
-            -doMajorMinor 1 \
-            -skipTriallelic 1 \
-        -doMaf 1 \
-            -minMaf $params.minMaf \
-            -SNP_pval 1e-6 \
-        -doCounts 1 \
-            -setMinDepthInd $params.setMinDepthInd \
-            -setMinDepth $params.setMinDepth \
-            -minInd \${minIndParam} \
-            -minQ $params.minQ \
-        -bam $subset \
-            -uniqueOnly 1 \
-            -minMapQ $params.minMapQ \
-            -r $chr \
-            -only_proper_pairs 1 \
+    angsd \\
+        -nThreads ${task.cpus} \\
+        -out ${name}_${chr} \\
+        -GL 1 \\
+            -doGlf 2 \\
+            -doMajorMinor 1 \\
+            -skipTriallelic 1 \\
+        -doMaf 1 \\
+            -minMaf $params.minMaf \\
+            -SNP_pval 1e-6 \\
+        -doCounts 1 \\
+            -setMinDepthInd $params.setMinDepthInd \\
+            -setMinDepth $params.setMinDepth \\
+            -minInd \${minIndParam} \\
+            -minQ $params.minQ \\
+        -bam $subset \\
+            -uniqueOnly 1 \\
+            -minMapQ $params.minMapQ \\
+            -r $chr \\
+            -only_proper_pairs 1 \\
             -remove_bads 1
     """
 }
