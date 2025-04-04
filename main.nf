@@ -95,7 +95,7 @@ process GenerateGL {
 
     script:    
     """
-    // indLen=\$(wc -l < $subset)
+    # indLen=\$(wc -l < $subset)
     if [ -n "\$params.minInd" ]; then
         indLen=\$params.minInd
     else
