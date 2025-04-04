@@ -94,7 +94,7 @@ process GenerateGL {
     tuple val(name), file("${name}_${chr}.beagle.gz"), val(ancestral) into GL_split_ch
 
     script:
-    def subsetFilePath = subset.toString()
+    def subsetFilePath = new File(subset.toString()).absolutePath
     def lineCount = new File(subsetFilePath).readLines().size()
     def roundedValue = (lineCount + 1) / 2
     def minIndParam = params.minInd ? "minInd=${params.minInd}" : "minInd=${roundedValue}"
