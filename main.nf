@@ -93,35 +93,34 @@ process GenerateGL {
     output:
     tuple val(name), file("${name}_${chr}.beagle.gz"), val(ancestral) into GL_split_ch
 
-    script:
-    println "Debug: subset file path is ${subset.toString()}"
-    // def subsetFilePath = new File(subset.toString()).absolutePath
-    // def lineCount = new File(subsetFilePath).readLines().size()
-    // def roundedValue = (lineCount + 1) / 2
-    // def minIndParam = params.minInd ? "minInd=${params.minInd}" : "minInd=${roundedValue}"
-    
+    script:    
     """
-    indLen=\$(wc -l < $subset)
-    angsd \\
-        -nThreads ${task.cpus} \\
-        -out ${name}_${chr} \\
-        -GL 1 \\
-            -doGlf 2 \\
-            -doMajorMinor 1 \\
-            -skipTriallelic 1 \\
-        -doMaf 1 \\
-            -minMaf ${params.minMaf} \\
-            -SNP_pval 1e-6 \\
-        -doCounts 1 \\
-            -setMinDepthInd ${params.setMinDepthInd} \\
-            -setMinDepth ${params.setMinDepth} \\
-            -minInd \$indLen \\
-            -minQ ${params.minQ} \\
-        -bam ${subset} \\
-            -uniqueOnly 1 \\
-            -minMapQ ${params.minMapQ} \\
-            -r ${chr} \\
-            -only_proper_pairs 1 \\
+    // indLen=\$(wc -l < $subset)
+    if [ -n "\$params.minInd" ]; then
+        indLen=\$params.minInd
+    else
+        indLen=\$(expr \$(wc -l < $subset) / 2)
+    fi
+    angsd \
+        -nThreads ${task.cpus} \
+        -out ${name}_${chr} \
+        -GL 1 \
+            -doGlf 2 \
+            -doMajorMinor 1 \
+            -skipTriallelic 1 \
+        -doMaf 1 \
+            -minMaf ${params.minMaf} \
+            -SNP_pval 1e-6 \
+        -doCounts 1 \
+            -setMinDepthInd ${params.setMinDepthInd} \
+            -setMinDepth ${params.setMinDepth} \
+            -minInd \$indLen \
+            -minQ ${params.minQ} \
+        -bam ${subset} \
+            -uniqueOnly 1 \
+            -minMapQ ${params.minMapQ} \
+            -r ${chr} \
+            -only_proper_pairs 1 \
             -remove_bads 1
     """
 }
