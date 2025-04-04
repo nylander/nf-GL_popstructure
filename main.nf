@@ -117,7 +117,7 @@ process GenerateGL {
             -setMinDepth ${params.setMinDepth} \\
             -minInd \$indLen \\
             -minQ ${params.minQ} \\
-        -bam ${subsetFilePath} \\
+        -bam ${subset} \\
             -uniqueOnly 1 \\
             -minMapQ ${params.minMapQ} \\
             -r ${chr} \\
