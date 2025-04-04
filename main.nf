@@ -95,13 +95,13 @@ process GenerateGL {
 
     script:
     println "Debug: subset file path is ${subset.toString()}"
-    def subsetFilePath = new File(subset.toString()).absolutePath
-    def lineCount = new File(subsetFilePath).readLines().size()
-    def roundedValue = (lineCount + 1) / 2
-    def minIndParam = params.minInd ? "minInd=${params.minInd}" : "minInd=${roundedValue}"
+    // def subsetFilePath = new File(subset.toString()).absolutePath
+    // def lineCount = new File(subsetFilePath).readLines().size()
+    // def roundedValue = (lineCount + 1) / 2
+    // def minIndParam = params.minInd ? "minInd=${params.minInd}" : "minInd=${roundedValue}"
     
     """
-    // indLen=\$(wc -l < $subset)
+    indLen=\$(wc -l < $subset)
     angsd \\
         -nThreads ${task.cpus} \\
         -out ${name}_${chr} \\
@@ -115,7 +115,7 @@ process GenerateGL {
         -doCounts 1 \\
             -setMinDepthInd ${params.setMinDepthInd} \\
             -setMinDepth ${params.setMinDepth} \\
-            -minInd ${minIndParam} \\
+            -minInd \$indLen \\
             -minQ ${params.minQ} \\
         -bam ${subsetFilePath} \\
             -uniqueOnly 1 \\
