@@ -71,6 +71,11 @@ channel.fromPath(params.bamlist_tsv)
     .map { row -> tuple(row.name, file(row.subset), row.ancestral) }
     .set { subset2_ch }
 
+// Channel that will be used to trigger the final process
+Channel
+    .fromPath(params.outdir)
+    .set { final_ch }
+
 // Make chromosome list
 chromo = file(params.chr).readLines()
 
@@ -224,22 +229,23 @@ process PCANGSD {
     """
 }
 
-//process CreatePongFileMap {
-// // Note: this process will execute as soon as the directory
-// // exists, and before any files have been created (fail).
-// // The process needs to be run at the very end of the workflow.
-//
-//    publishDir "${params.outdir}/02.NGSadmix/", mode:'copy'
-//
-//    input:
-//    val(x) from channel.fromPath(params.outdir)
-//
-//    output:
-//    file("pong_filemap.txt")
-//
-//    script:
-//    """
-//    glpop_file_map.py $x > "pong_filemap.txt"
-//    """
-//}
+process CreatePongFileMap {
+    // The process needs to be run at the very end of the workflow.
+
+    publishDir "${params.outdir}/02.NGSadmix/", mode:'copy'
+
+    input:
+    val(outdir) from final_ch
+
+    output:
+    file("pong_filemap.txt")
+
+    script:
+    """
+    glpop_file_map.py ${outdir} > "pong_filemap.txt"
+    """
+}
+
+// Ensure the final process runs after all other processes
+final_ch.afterAll(GL_merge_ch, GL_prune_ch, GL_admix_ch, GL_pca_ch)
 
