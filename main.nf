@@ -100,10 +100,15 @@ process GenerateGL {
     //else {
     //    indLen=\$(expr \$(wc -l < $subset) / 2)
     //}
-    def indLen = params.minInd ?: (subset.readLines().size() / 2)
+    //def indLen = params.minInd ?: (subset.readLines().size() / 2)
     """
     # indLen=\$(wc -l < $subset)
     # indLen=\$(expr \$(wc -l < $subset) / 2)
+    if [ -z "${params.minInd}" ]; then
+        indLen=\$(expr \$(wc -l < ${subset}) / 2)
+    else
+        indLen=${params.minInd}
+    fi
     angsd \
         -nThreads ${task.cpus} \
         -out ${name}_${chr} \
@@ -117,7 +122,7 @@ process GenerateGL {
         -doCounts 1 \
             -setMinDepthInd ${params.setMinDepthInd} \
             -setMinDepth ${params.setMinDepth} \
-            -minInd ${indLen} \
+            -minInd \${indLen} \
             -minQ ${params.minQ} \
         -bam ${subset} \
             -uniqueOnly 1 \
