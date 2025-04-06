@@ -93,14 +93,16 @@ process GenerateGL {
     output:
     tuple val(name), file("${name}_${chr}.beagle.gz"), val(ancestral) into GL_split_ch
 
-    script:    
+    script:
     """
     # indLen=\$(wc -l < $subset)
-    if [ -n "\${params.minInd:-}" ]; then
-        indLen=\$params.minInd
-    else
+    # indLen=\$(expr \$(wc -l < $subset) / 2)
+    if (!params.minInd) {
+        indLen=$params.minInd
+    }
+    else {
         indLen=\$(expr \$(wc -l < $subset) / 2)
-    fi
+    }
     angsd \
         -nThreads ${task.cpus} \
         -out ${name}_${chr} \
@@ -114,7 +116,7 @@ process GenerateGL {
         -doCounts 1 \
             -setMinDepthInd ${params.setMinDepthInd} \
             -setMinDepth ${params.setMinDepth} \
-            -minInd \$indLen \
+            -minInd ${indLen} \
             -minQ ${params.minQ} \
         -bam ${subset} \
             -uniqueOnly 1 \
