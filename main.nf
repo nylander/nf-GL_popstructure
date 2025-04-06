@@ -94,16 +94,8 @@ process GenerateGL {
     tuple val(name), file("${name}_${chr}.beagle.gz"), val(ancestral) into GL_split_ch
 
     script:
-    //if (!params.minInd) {
-    //    indLen=$params.minInd
-    //}
-    //else {
-    //    indLen=\$(expr \$(wc -l < $subset) / 2)
-    //}
-    //def indLen = params.minInd ?: (subset.readLines().size() / 2)
     """
     # indLen=\$(wc -l < $subset)
-    # indLen=\$(expr \$(wc -l < $subset) / 2)
     if [ -z "${params.minInd}" ]; then
         indLen=\$(expr \$(wc -l < ${subset}) / 2)
     else
